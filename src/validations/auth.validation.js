@@ -17,4 +17,23 @@ const loginSchema = z.object({
   password: z.string().min(8).trim(),
 });
 
-module.exports = { registerSchema, loginSchema };
+const refreshTokenSchema = z.object({
+  refreshToken: z.string().min(1).trim(),
+});
+
+const verifyEmailSchema = z.object({
+  email: z.string().email().trim(),
+  otp: z.string().trim().length(6),
+});
+
+const sendOTPSchema = z.object({
+  email: z.string().email().trim(),
+});
+
+module.exports = {
+  registerSchema,
+  loginSchema,
+  refreshTokenSchema,
+  verifyEmailSchema,
+  sendOTPSchema,
+};

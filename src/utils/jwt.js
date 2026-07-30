@@ -11,10 +11,32 @@ function generateAccessToken(user) {
 }
 
 function generateRefreshToken(user) {
-  const Token = jwt.sign({ id: user.id }, process.env.JWT_REFRESH_SECRET, {
-    expiresIn: "7d",
-  });
+  const refreshToken = jwt.sign(
+    { id: user.id },
+    process.env.JWT_REFRESH_SECRET,
+    {
+      expiresIn: "7d",
+    },
+  );
+
   return refreshToken;
 }
 
-module.exports = { generateAccessToken, generateRefreshToken };
+function verifyRefreshToken(refreshToken) {
+  const payload = jwt.verify(refreshToken, process.env.JWT_REFRESH_SECRET);
+
+  return payload;
+}
+
+function verifyAccessToken(accessToken) {
+  const payload = jwt.verify(accessToken, process.env.JWT_SECRET);
+
+  return payload;
+}
+
+module.exports = {
+  generateAccessToken,
+  generateRefreshToken,
+  verifyRefreshToken,
+  verifyAccessToken,
+};

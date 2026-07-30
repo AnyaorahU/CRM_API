@@ -11,6 +11,15 @@ async function findByEmail(email) {
   return result.rows[0];
 }
 
+async function findById(id) {
+  const result = await pool.query(`SELECT * FROM users WHERE id = $1`, [id]);
+  if (result.rows.length === 0) {
+    return null;
+  }
+
+  return result.rows[0];
+}
+
 async function createUser(user) {
   const { name, email, password } = user;
   const result = await pool.query(
@@ -21,4 +30,11 @@ async function createUser(user) {
   return result.rows[0];
 }
 
-module.exports = { createUser, findByEmail };
+async function updateUserVerification(email) {
+  const result = await pool.query(
+    `UPDATE users SET is_verified = true WHERE email = $1`,
+    [email],
+  );
+}
+
+module.exports = { createUser, findByEmail, findById, updateUserVerification };

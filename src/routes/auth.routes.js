@@ -17,4 +17,23 @@ authRoutes.post(
   validation(authValidation.loginSchema),
   asyncHandler(authController.login),
 );
+
+authRoutes.post(
+  "/refresh ",
+  validation(authValidation.refreshTokenSchema),
+  asyncHandler(authController.refreshToken),
+);
+
+authRoutes.post(
+  "/verify-email",
+  validation(authValidation.verifyEmailSchema),
+  asyncHandler(authController.verifyEmail),
+);
+
+authRoutes.post(
+  "/send-otp",
+  validation(authValidation.sendOTPSchema),
+  asyncHandler(authController.sendOTP),
+);
+
 module.exports = authRoutes;

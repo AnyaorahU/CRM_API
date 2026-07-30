@@ -10,7 +10,7 @@ const refreshTokenSchema = async () => {
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
         expires_at TIMESTAMP NOT NULL,
 
-        FOREIGN KEY (user_id) REFRENCES users(id) ON DELETE CASCADE
+        FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
         )      
         `);
 };

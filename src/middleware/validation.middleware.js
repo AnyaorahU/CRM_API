@@ -1,6 +1,5 @@
 function validation(schema) {
   return function (req, res, next) {
-    console.log("verification reached");
     const result = schema.safeParse(req.body);
 
     if (!result.success) {
