@@ -9,4 +9,13 @@ async function updateProfileName({ name, userId }) {
   return result.rows[0];
 }
 
-module.exports = { updateProfileName };
+async function updateProfileRole({ id, role }) {
+  const result = await pool.query(
+    `UPDATE users SET role = $1, updated_at = CURRENT_TIMESTAMP WHERE id = $2 RETURNING id, name, email, role`,
+    [role, id],
+  );
+
+  return result.rows[0];
+}
+
+module.exports = { updateProfileName, updateProfileRole };

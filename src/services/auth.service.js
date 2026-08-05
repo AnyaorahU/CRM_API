@@ -10,13 +10,14 @@ const {
 } = require("../utils/jwt");
 const pool = require("../database/database");
 const { Client } = require("pg");
+const AppError = require("../utils/error.handling");
 
 const register = async (validatedData) => {
   const { email, password, ...rest } = validatedData;
   const exist = await authRepository.findByEmail(email);
 
   if (exist) {
-    throw new Error("user already exists.");
+    throw new AppError("user already exists.", 400);
   }
 
   const passwordHashed = await bcrypt.hash(password, 10);
@@ -41,12 +42,12 @@ const login = async (validatedData) => {
 
   const user = await authRepository.findByEmail(email);
   if (!user) {
-    throw new Error("invalid credentials");
+    throw new AppError("invalid credentials", 400);
   }
 
   const match = await bcrypt.compare(password, user.password);
   if (!match) {
-    throw new Error("invalid credentials");
+    throw new AppError("invalid credentials", 400);
   }
 
   if (!user.is_verified) {
@@ -54,7 +55,7 @@ const login = async (validatedData) => {
     const otp = otpservice.generateOTP();
     otpservice.storeOTP({ email, otp });
     await emailservice.sendOTPEmail({ email, otp });
-    throw new Error("email not verified, a new otp has been sent");
+    throw new AppError("email not verified, a new otp has been sent", 400);
   }
 
   const accessToken = generateAccessToken(user);
@@ -81,15 +82,15 @@ const refreshToken = async (validatedData) => {
   const storedToken = await tokenRepository.findRefreshToken(refreshToken);
 
   if (!storedToken) {
-    throw new Error("Unauthorized");
+    throw new AppError("Unauthorized", 401);
   }
   if (storedToken.user_id !== payload.id) {
-    throw new Error("Unauthorized");
+    throw new AppError("Unauthorized", 401);
   }
 
   const user = await authRepository.findById(payload.id);
   if (!user) {
-    throw new Error("Unauthorized");
+    throw new AppError("Unauthorized", 401);
   }
 
   const newAccessToken = generateAccessToken(user);
@@ -133,10 +134,10 @@ const verifyEmail = async (validatedData) => {
 
   const user = await authRepository.findByEmail(email);
   if (!user) {
-    throw new Error("Unauthorized");
+    throw new AppError("Unauthorized", 400);
   }
   if (user.is_verified === true) {
-    throw new Error("user already verified");
+    throw new AppError("user already verified", 400);
   }
 
   const updateUser = await authRepository.updateUserVerification(email);
@@ -149,11 +150,11 @@ const sendOTP = async (validatedData) => {
 
   const user = await authRepository.findByEmail(email);
   if (!user) {
-    throw new Error("Email not registered");
+    throw new AppError("Email not registered", 400);
   }
 
   if (user.is_verified) {
-    throw new Error("Email already verified");
+    throw new AppError("Email already verified", 400);
   }
 
   const otp = otpservice.generateOTP();

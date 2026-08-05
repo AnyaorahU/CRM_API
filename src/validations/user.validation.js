@@ -4,4 +4,8 @@ const updateProfileSchema = z.object({
   name: z.string().trim().min(2),
 });
 
-module.exports = { updateProfileSchema };
+const updateProfileRole = z.object({
+  role: z.enum(["admin", "sales", "viewer", "user"]).default("user"),
+});
+
+module.exports = { updateProfileSchema, updateProfileRole };

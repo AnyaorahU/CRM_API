@@ -20,6 +20,32 @@ leadRoute.get(
   "/",
   authMiddleware,
   authorize("admin", "sales", "user"),
+  validation(leadValidation.getLeadsSchema, "query"),
   asyncHandler(leadController.getLeads),
+);
+
+leadRoute.get(
+  "/:id",
+  authMiddleware,
+  authorize("admin", "sales", "user"),
+  validation(leadValidation.getLeadByIdSchema, "params"),
+  asyncHandler(leadController.getLeadById),
+);
+
+leadRoute.patch(
+  "/:id",
+  authMiddleware,
+  authorize("admin", "sales"),
+  validation(leadValidation.getLeadByIdSchema, "params"),
+  validation(leadValidation.updateLeadSchema, "body"),
+  asyncHandler(leadController.updateLead),
+);
+
+leadRoute.delete(
+  "/:id",
+  authMiddleware,
+  authorize("admin", "sales"),
+  validation(leadValidation.getLeadByIdSchema, "params"),
+  asyncHandler(leadController.deleteLead),
 );
 module.exports = leadRoute;

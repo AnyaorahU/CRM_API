@@ -4,6 +4,7 @@ const userController = require("../controllers/user.controller");
 const validation = require("../middleware/validation.middleware");
 const userValidation = require("../validations/user.validation");
 const asyncHandler = require("../middleware/asynchandler");
+const authorize = require("../middleware/auth.authorize");
 
 const userRoutes = express.Router();
 
@@ -14,6 +15,13 @@ userRoutes.put(
   authMiddleware,
   validation(userValidation.updateProfileSchema),
   asyncHandler(userController.updateProfile),
+);
+userRoutes.put(
+  "/role",
+  authMiddleware,
+  authorize("admin"),
+  validation(userValidation.updateProfileRole),
+  asyncHandler(userController.updateRole),
 );
 
 module.exports = userRoutes;

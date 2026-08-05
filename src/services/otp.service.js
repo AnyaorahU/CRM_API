@@ -1,5 +1,6 @@
 const crypto = require("crypto");
 const redis = require("../config/redis");
+const AppError = require("../utils/error.handling");
 
 function generateOTP() {
   const otp = crypto.randomInt(100000, 1000000);
@@ -17,12 +18,12 @@ async function verifyOTP({ email, otp }) {
   const key = `otp:${email}`;
   const storedOTP = await redis.get(key);
   if (!storedOTP) {
-    throw new Error("otp not found");
+    throw new AppError("otp not found", 404);
   }
 
   const match = Number(storedOTP) === otp;
   if (!match) {
-    throw new Error("invalid otp");
+    throw new AppError("invalid otp", 400);
   }
 
   await redis.del(key);

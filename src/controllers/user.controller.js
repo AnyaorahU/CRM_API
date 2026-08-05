@@ -21,4 +21,17 @@ async function updateProfile(req, res) {
   });
 }
 
-module.exports = { getProfile, updateProfile };
+async function updateRole(req, res) {
+  const user = req.user;
+  const validatedData = req.validatedData;
+
+  const result = await userService.updateRole({ user, validatedData });
+
+  return res.status(200).json({
+    success: true,
+    message: "role updated",
+    data: result,
+  });
+}
+
+module.exports = { getProfile, updateProfile, updateRole };
