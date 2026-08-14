@@ -1,5 +1,5 @@
 const leadRepository = require("../repositories/lead.repository");
-const AppError = require("../utils/error.handling");
+const AppError = require("../errors/apperror");
 
 async function createLead({ validatedData, user }) {
   const { id: ownerId } = user;
@@ -20,8 +20,9 @@ async function createLead({ validatedData, user }) {
   return result;
 }
 
-async function getLeads({ limit, page, user, search, status }) {
+async function getLeads({ limit, page, user, search, status, field, order }) {
   const { id: ownerId, role } = user;
+  const { sortField, sortOrder } = sorting({ field, order });
   const offset = (page - 1) * limit;
 
   const leads = await leadRepository.leadDynamic({
@@ -30,6 +31,8 @@ async function getLeads({ limit, page, user, search, status }) {
     search,
     ownerId: role === "admin" ? null : ownerId,
     status,
+    sortField,
+    sortOrder,
   });
 
   if (leads.length === 0) {
@@ -119,6 +122,21 @@ async function deleteLead({ id, user }) {
   const result = await leadRepository.deleteLead(id);
 
   return result;
+}
+
+function sorting({ field, order }) {
+  const allowedField = ["created_at", "full_name", "status", "company_name"];
+  const allowedOrder = ["ASC", "DESC"];
+
+  const sortField = allowedField.includes(field) ? field : "created_at";
+  const sortOrder = allowedOrder.includes(order?.toUpperCase())
+    ? order.toUpperCase()
+    : "DESC";
+
+  return {
+    sortField,
+    sortOrder,
+  };
 }
 
 module.exports = { createLead, getLeads, getLeadById, updateLead, deleteLead };

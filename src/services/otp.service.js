@@ -1,6 +1,6 @@
 const crypto = require("crypto");
 const redis = require("../config/redis");
-const AppError = require("../utils/error.handling");
+const AppError = require("../errors/apperror");
 
 function generateOTP() {
   const otp = crypto.randomInt(100000, 1000000);

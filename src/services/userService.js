@@ -1,6 +1,6 @@
 const authRepository = require("../repositories/auth.repository");
 const userRepository = require("../repositories/user.repository");
-const AppError = require("../utils/error.handling");
+const AppError = require("../errors/apperror");
 
 const updateProfile = async ({ validatedData, user }) => {
   const { name } = validatedData;

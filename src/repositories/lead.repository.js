@@ -77,7 +77,15 @@ async function createLead(lead) {
 //   return result.rows;
 // }
 
-async function leadDynamic({ search, status, ownerId, limit, offset }) {
+async function leadDynamic({
+  search,
+  status,
+  ownerId,
+  limit,
+  offset,
+  sortField,
+  sortOrder,
+}) {
   let query = `SELECT  id,
     full_name,
     email,
@@ -97,6 +105,7 @@ async function leadDynamic({ search, status, ownerId, limit, offset }) {
     conditions.push(
       `(full_name ILIKE $${index} OR company_name ILIKE $${index} OR email ILIKE $${index})`,
     );
+    // conditions.push(`search_text ILIKE $${index}`) // for composition indexes
     values.push(`%${search}%`);
   }
   //status
@@ -123,7 +132,7 @@ async function leadDynamic({ search, status, ownerId, limit, offset }) {
   values.push(offset);
   const offsetIndex = values.length;
   query += `
-  ORDER BY created_at DESC 
+  ORDER BY ${sortField} ${sortOrder} 
   LIMIT $${limitIndex} 
   OFFSET $${offsetIndex}
   `;

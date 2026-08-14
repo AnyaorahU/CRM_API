@@ -10,7 +10,7 @@ const {
 } = require("../utils/jwt");
 const pool = require("../database/database");
 const { Client } = require("pg");
-const AppError = require("../utils/error.handling");
+const AppError = require("../errors/apperror");
 
 const register = async (validatedData) => {
   const { email, password, ...rest } = validatedData;

@@ -19,8 +19,12 @@ async function getLeads(req, res) {
   const user = req.user;
   const limit = Number(req.query.limit) || 20;
   const page = Number(req.query.page) || 1;
+
   const search = req.query.search;
   const status = req.query.status;
+
+  const field = req.query.field;
+  const order = req.query.order;
 
   const result = await leadService.getLeads({
     limit,
@@ -28,6 +32,8 @@ async function getLeads(req, res) {
     user,
     search,
     status,
+    field,
+    order,
   });
 
   res.status(200).json({
